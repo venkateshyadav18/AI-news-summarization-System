@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliNews - Smart News Analysis</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <div class="brand-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <h1 class="brand-title">IntelliNews</h1>
+                    <p class="brand-subtitle">Smart News Analysis Platform</p>
+                </div>
+            </div>
+        </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="input-panel">
+                <div class="panel-header">
+                    <i class="fas fa-edit"></i>
+                    <h2 class="panel-title">Input Article</h2>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="articleUrl">
+                        <i class="fas fa-link"></i> Article URL
+                    </label>
+                    <input type="url" id="articleUrl" class="form-input" placeholder="https://example.com/news-article">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="articleText">
+                        <i class="fas fa-file-text"></i> Article Content
+                    </label>
+                    <textarea id="articleText" class="form-input textarea" placeholder="Paste your news article content here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="articleCategory">
+                        <i class="fas fa-tags"></i> Category
+                    </label>
+                    <select id="articleCategory" class="form-input form-select">
+                        <option value="general">General News</option>
+                        <option value="technology">Technology</option>
+                        <option value="business">Business</option>
+                        <option value="health">Health & Medicine</option>
+                        <option value="science">Science</option>
+                        <option value="sports">Sports</option>
+                        <option value="politics">Politics</option>
+                        <option value="entertainment">Entertainment</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="analyzeArticle()">
+                    <i class="fas fa-magic"></i> Analyze Article
+                </button>
+                <button class="btn btn-secondary" onclick="loadSampleArticle()">
+                    <i class="fas fa-flask"></i> Load Sample Article
+                </button>
+            </div>
+            <div class="results-panel">
+                <div class="results-header">
+                    <h2 class="results-title">
+                        <i class="fas fa-chart-line"></i> Analysis Results
+                    </h2>
+                    <div class="status-badge" id="statusBadge">Ready</div>
+                </div>
+                <div class="loading-container" id="loadingContainer">
+                    <div class="loading-animation"></div>
+                    <div class="loading-text">Processing your article...</div>
+                    <div class="loading-steps" id="loadingSteps">Initializing analysis</div>
+                </div>
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">
+                        <i class="fas fa-newspaper"></i>
+                    </div>
+                    <div class="empty-title">Ready to Analyze</div>
+                    <div class="empty-description">
+                        Enter a news article URL or paste the content to begin intelligent analysis.
+                    </div>
+                </div>
+                <div class="results-content" id="resultsContent">
+                    <!-- Results will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/analysis.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
