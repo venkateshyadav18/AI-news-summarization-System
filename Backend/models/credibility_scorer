@@ -1,0 +1,94 @@
+import re
+import requests
+from urllib.parse import urlparse
+import nltk
+from nltk.corpus import stopwords
+
+class CredibilityScorer:
+    def __init__(self):
+        nltk.download('stopwords', quiet=True)
+        self.stop_words = set(stopwords.words('english'))
+        self.trusted_sources = {
+            'bbc.com': 95, 'reuters.com': 95, 'ap.org': 95, 'npr.org': 90,
+            'nytimes.com': 85, 'washingtonpost.com': 85, 'theguardian.com': 80,
+            'cnn.com': 75, 'foxnews.com': 70
+        }
+        self.positive_indicators = ['study', 'research', 'published', 'journal', 'university',
+                                    'professor', 'expert', 'data', 'statistics', 'evidence',
+                                    'peer-reviewed', 'scientific', 'analysis', 'findings']
+        self.negative_indicators = ['allegedly', 'reportedly', 'sources say', 'rumor',
+                                    'conspiracy', 'hoax', 'fake', 'misleading']
+    
+    def score_credibility(self, text, category='general', source_url=None):
+        score = 50
+        source_score = self._score_source(source_url)
+        score += source_score * 0.3
+        content_score = self._analyze_content(text)
+        score += content_score * 0.4
+        category_bonus = self._get_category_bonus(category)
+        score += category_bonus * 0.2
+        language_score = self._analyze_language(text)
+        score += language_score * 0.1
+        final_score = max(0, min(100, round(score)))
+        return {
+            'score': final_score,
+            'breakdown': {
+                'source_reliability': round(source_score, 1),
+                'content_analysis': round(content_score, 1),
+                'category_factor': round(category_bonus, 1),
+                'language_quality': round(language_score, 1)
+            },
+            'factors': self._get_credibility_factors(text)
+        }
+    
+    def _score_source(self, url):
+        if not url:
+            return 0
+        try:
+            domain = urlparse(url).netloc.lower().replace('www.', '')
+            return self.trusted_sources.get(domain, 25)
+        except:
+            return 0
+    
+    def _analyze_content(self, text):
+        text_lower = text.lower()
+        score = 50
+        positive_count = sum(1 for indicator in self.positive_indicators if indicator in text_lower)
+        score += positive_count * 5
+        negative_count = sum(1 for indicator in self.negative_indicators if indicator in text_lower)
+        score -= negative_count * 8
+        citation_patterns = [r'\[[\d\w\s,-]+\]', r'\([\d\w\s,-]+\)', r'according to.*?[\.;,]', r'said.*?[\.;,]']
+        citations = sum(len(re.findall(pattern, text, re.IGNORECASE)) for pattern in citation_patterns)
+        score += min(citations * 3, 15)
+        return score
+    
+    def _get_category_bonus(self, category):
+        bonuses = {'science': 10, 'health': 8, 'technology': 5, 'business': 3,
+                   'politics': -5, 'entertainment': -2, 'sports': 0, 'general': 0}
+        return bonuses.get(category, 0)
+    
+    def _analyze_language(self, text):
+        score = 50
+        emotional_words = ['amazing', 'shocking', 'devastating', 'incredible', 'unbelievable', 'outrageous', 'fantastic']
+        emotional_count = sum(1 for word in emotional_words if word in text.lower())
+        score -= emotional_count * 2
+        first_person = len(re.findall(r'\b(i|me|my|mine|we|us|our|ours)\b', text.lower()))
+        score -= first_person * 0.5
+        sentences = re.split(r'[.!?]+', text)
+        avg_sentence_length = sum(len(s.split()) for s in sentences if s.strip()) / max(1, len(sentences))
+        if 15 <= avg_sentence_length <= 25:
+            score += 5
+        return score
+    
+    def _get_credibility_factors(self, text):
+        factors = []
+        text_lower = text.lower()
+        if any(indicator in text_lower for indicator in self.positive_indicators[:5]):
+            factors.append('Research citations found')
+        if 'study' in text_lower or 'research' in text_lower:
+            factors.append('Scientific methodology referenced')
+        if len(re.findall(r'\d+%|\d+\.\d+', text)) > 0:
+            factors.append('Statistical data present')
+        if any(word in text_lower for word in ['expert', 'professor', 'dr.']):
+            factors.append('Expert sources quoted')
+        return factors[:4]
