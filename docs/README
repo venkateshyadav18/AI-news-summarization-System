@@ -1,0 +1,25 @@
+# AI News Summarization System
+
+## 🚀 Features
+- Abstractive Summarization
+- Sentiment Analysis
+- Credibility Scoring
+- Real-time Processing
+- Multi-format Export
+- Responsive UI
+
+## 🛠 Installation
+
+### Local Setup
+```bash
+git clone https://github.com/yourusername/ai-news-summarizer.git
+cd ai-news-summarizer
+cd backend
+pip install -r requirements.txt
+python app.py
+```
+
+### Docker Setup
+```bash
+docker-compose -f docker/docker-compose.yml up -d
+```
